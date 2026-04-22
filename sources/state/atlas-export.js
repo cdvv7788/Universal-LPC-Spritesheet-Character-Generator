@@ -28,7 +28,11 @@ import {
 import { canvasToBlob } from "../canvas/canvas-utils.js";
 import { debugLog } from "../utils/debug.js";
 
-const GUTTER = 1;
+// 4px gutter aligns the shelf boundaries with BasisU's 4×4 encoding blocks.
+// This keeps every compressed block fully inside one frame or fully inside
+// padding, preventing edge colors from bleeding across frame boundaries at
+// encode time. Costs ~3-5% atlas area vs a 1px gutter.
+const GUTTER = 4;
 const ATLAS_VERSION = "0.1.0";
 
 function tightBBox(frameCanvas) {
@@ -206,15 +210,25 @@ function collectCustomRects(ctx) {
   }
 }
 
+// GPU-compressed texture formats (BC7/ASTC/ETC2) require texture dimensions
+// to be multiples of their block size. Round up to the largest block size we
+// care about (ASTC 4×4 → 4; ASTC 6×6/8×8 would be 6/8 but we target 4×4). If
+// we later want 6×6 ASTC, bump this to 12 (LCM of supported block sizes).
+const BLOCK_ALIGNMENT = 4;
+
+function roundUp(n, multiple) {
+  return Math.ceil(n / multiple) * multiple;
+}
+
 function shelfPack(rects) {
   rects.sort((a, b) => b.h - a.h || b.w - a.w);
   const totalArea = rects.reduce(
     (s, r) => s + (r.w + GUTTER) * (r.h + GUTTER),
     0,
   );
-  const atlasWidth = Math.max(
-    rects[0].w + GUTTER,
-    Math.ceil(Math.sqrt(totalArea) * 1.2),
+  const atlasWidth = roundUp(
+    Math.max(rects[0].w + GUTTER, Math.ceil(Math.sqrt(totalArea) * 1.2)),
+    BLOCK_ALIGNMENT,
   );
   let shelfX = 0;
   let shelfY = 0;
@@ -229,7 +243,8 @@ function shelfPack(rects) {
     r.py = shelfY;
     shelfX += r.w + GUTTER;
   }
-  return { atlasWidth, atlasHeight: shelfY + shelfH };
+  const atlasHeight = roundUp(shelfY + shelfH, BLOCK_ALIGNMENT);
+  return { atlasWidth, atlasHeight };
 }
 
 function buildJson({
@@ -280,10 +295,11 @@ function buildJson({
   };
 }
 
-async function downloadZip(pngBlob, jsonString, baseName) {
+async function downloadZip({ pngBlob, jsonString, ktx2Bytes, baseName }) {
   const zip = new window.JSZip();
   zip.file(`${baseName}.png`, pngBlob);
   zip.file(`${baseName}.json`, jsonString);
+  if (ktx2Bytes) zip.file(`${baseName}.ktx2`, ktx2Bytes);
   const blob = await zip.generateAsync({ type: "blob" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -345,6 +361,25 @@ export async function exportAtlas() {
     imageName: `${baseName}.png`,
   });
   const pngBlob = await canvasToBlob(atlasCanvas);
-  await downloadZip(pngBlob, JSON.stringify(json, null, 2), baseName);
-  alert(summary);
+
+  // KTX2 encode is lazy so the 2.7 MB WASM only loads when you click export.
+  let ktx2Bytes = null;
+  let ktx2Summary = "";
+  try {
+    const { encodeKtx2 } = await import("./atlas-ktx.js");
+    const result = await encodeKtx2(atlasCanvas);
+    ktx2Bytes = result.bytes;
+    ktx2Summary = `\nKTX2 (UASTC + zstd): ${(ktx2Bytes.byteLength / 1024).toFixed(1)} KB, encoded in ${result.elapsedMs.toFixed(0)} ms`;
+  } catch (err) {
+    ktx2Summary = `\nKTX2 encode failed: ${err.message}`;
+    debugLog("KTX2 encode error:", err);
+  }
+
+  await downloadZip({
+    pngBlob,
+    jsonString: JSON.stringify(json, null, 2),
+    ktx2Bytes,
+    baseName,
+  });
+  alert(summary + ktx2Summary);
 }

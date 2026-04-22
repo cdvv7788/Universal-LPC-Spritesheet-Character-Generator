@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "validate-site-sources": "node scripts/generate_sources.mjs",
-    "demo:phaser": "serve demo/phaser -l 8001",
+    "demo:pixi": "serve demo/pixi -l 8001",
     "z-positions": "node scripts/zPositioning/parse_zpos.js",
     "z-positions:update": "node scripts/zPositioning/update_zpos.js",
     "test": "npm run test:node && node ./node_modules/testem/testem.js ci",

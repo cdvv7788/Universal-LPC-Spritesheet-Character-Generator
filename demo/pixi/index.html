@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LPC Atlas — PNG vs KTX2 (PixiJS)</title>
+    <style>
+      html, body { margin: 0; background: #1a1a1a; color: #ddd; font: 13px -apple-system, monospace; }
+      body { padding: 16px; }
+      h1 { font-size: 14px; margin: 0 0 8px; }
+      p { margin: 4px 0 12px; line-height: 1.5; }
+      .pair { display: flex; gap: 24px; align-items: flex-start; }
+      .col { display: flex; flex-direction: column; gap: 8px; }
+      .col h2 { font-size: 12px; margin: 0; color: #8ac; letter-spacing: 0.1em; text-transform: uppercase; }
+      .col canvas { image-rendering: pixelated; image-rendering: crisp-edges; border: 1px solid #333; background: #111; }
+      kbd { background: #333; padding: 1px 5px; border-radius: 3px; font-family: monospace; }
+      #stats { margin-top: 12px; color: #888; white-space: pre-wrap; }
+      .controls { display: flex; gap: 24px; align-items: center; margin: 12px 0; }
+      .controls label { display: flex; align-items: center; gap: 6px; }
+      select { background: #222; color: #ddd; border: 1px solid #444; padding: 4px 6px; font-family: monospace; }
+    </style>
+  </head>
+  <body>
+    <h1>LPC Atlas — PNG vs KTX2 side-by-side (PixiJS 8)</h1>
+    <p>
+      Arrow keys drive both sprites in lockstep. Any visual difference is a
+      KTX2/BasisU encoder artifact.
+    </p>
+    <div class="controls">
+      <label>Idle animation: <select id="idle-select"></select></label>
+      <label>Walk animation: <select id="walk-select"></select></label>
+    </div>
+    <div class="pair">
+      <div class="col">
+        <h2>PNG (decoded to RGBA8888 in VRAM)</h2>
+        <div id="pane-png"></div>
+      </div>
+      <div class="col">
+        <h2>KTX2 (UASTC + zstd, transcoded on load)</h2>
+        <div id="pane-ktx2"></div>
+      </div>
+    </div>
+    <pre id="stats">loading…</pre>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

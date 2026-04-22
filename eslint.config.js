@@ -35,6 +35,9 @@ module.exports = [
       "tests/fixtures/**",
       "tmp/**",
       "spritesheets/**",
+      // Third-party prebuilt BasisU encoder (Emscripten output from
+      // BinomialLLC/basis_universal). Minified, not our code.
+      "public/vendor/**",
     ],
   },
   js.configs.recommended,
@@ -72,12 +75,11 @@ module.exports = [
     languageOptions: {
       parserOptions: {
         ...sharedParserOptions,
-        sourceType: "script",
+        sourceType: "module",
       },
       globals: {
         ...globals.browser,
         ...globals.es2021,
-        Phaser: "readonly",
       },
     },
   },
