@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LPC Atlas — Phaser Demo</title>
+    <style>
+      html, body { margin: 0; background: #1a1a1a; color: #ddd; font: 13px -apple-system, monospace; }
+      body { padding: 16px; }
+      h1 { font-size: 14px; margin: 0 0 8px; }
+      p { margin: 4px 0 12px; line-height: 1.5; }
+      #game { image-rendering: pixelated; image-rendering: crisp-edges; border: 1px solid #333; }
+      kbd { background: #333; padding: 1px 5px; border-radius: 3px; font-family: monospace; }
+      .row { display: flex; gap: 16px; align-items: flex-start; }
+      .controls { min-width: 220px; }
+      select { background: #222; color: #ddd; border: 1px solid #444; padding: 4px 6px; }
+      label { display: block; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>LPC Atlas Phaser Demo</h1>
+    <p>
+      Extract your exported <code>character-atlas.zip</code> so that
+      <code>character-atlas.png</code> and <code>character-atlas.json</code>
+      sit next to this file. Reload. Move with <kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd>.
+    </p>
+    <div class="row">
+      <div id="game"></div>
+      <div class="controls">
+        <label>Idle animation:<br/><select id="idle-select"></select></label>
+        <label>Walk animation:<br/><select id="walk-select"></select></label>
+        <p id="stats" style="margin-top:12px;color:#888"></p>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"
+      integrity="sha384-Fi7F0CYQBHYa+s2vvYJeiqvOQf3tuZ28vafRGXvMt7ijxNTVf3+eXPkNRIUi9JD2"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="./main.js"></script>
+  </body>
+</html>

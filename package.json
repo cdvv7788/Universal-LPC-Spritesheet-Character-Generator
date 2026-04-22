@@ -11,6 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "validate-site-sources": "node scripts/generate_sources.mjs",
+    "demo:phaser": "serve demo/phaser -l 8001",
     "z-positions": "node scripts/zPositioning/parse_zpos.js",
     "z-positions:update": "node scripts/zPositioning/update_zpos.js",
     "test": "npm run test:node && node ./node_modules/testem/testem.js ci",
@@ -50,10 +51,10 @@
     "sinon": "^21.1.2",
     "testem": "^3.20.0",
     "vite": "^8.0.8",
-    "vite-plugin-testem": "^1.0.1",
     "vite-multiple-assets": "^2.2.6",
     "vite-plugin-cp": "^6.0.3",
-    "vite-plugin-run": "^0.8.0"
+    "vite-plugin-run": "^0.8.0",
+    "vite-plugin-testem": "^1.0.1"
   },
   "overrides": {
     "mocha": {

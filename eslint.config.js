@@ -68,6 +68,20 @@ module.exports = [
     },
   },
   {
+    files: ["demo/**/*.js"],
+    languageOptions: {
+      parserOptions: {
+        ...sharedParserOptions,
+        sourceType: "script",
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.es2021,
+        Phaser: "readonly",
+      },
+    },
+  },
+  {
     files: ["tests/**/*.js"],
     ignores: ["tests/visual/**"],
     languageOptions: {

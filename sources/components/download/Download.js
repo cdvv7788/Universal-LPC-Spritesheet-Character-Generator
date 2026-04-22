@@ -15,6 +15,7 @@ import {
   exportSplitItemAnimations,
   exportIndividualFrames,
 } from "../../state/zip.js";
+import { exportAtlas } from "../../state/atlas-export.js";
 import { debugLog } from "../../utils/debug.js";
 
 export const Download = {
@@ -73,6 +74,11 @@ export const Download = {
             "button.button.is-small.is-primary",
             { onclick: saveAsPNG },
             "Spritesheet (PNG)",
+          ),
+          m(
+            "button.button.is-small.is-primary",
+            { onclick: exportAtlas },
+            "Atlas (ZIP: PNG + JSON)",
           ),
           m(
             "button.button.is-small",
